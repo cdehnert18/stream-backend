@@ -69,8 +69,9 @@ ENV_FILE=".env"
 
 # Überprüfen, ob die .env-Datei existiert
 if [ -f "$ENV_FILE" ]; then
-  export DB_USERNAME=$(head -n 1 "$ENV_FILE" | cut -d '=' -f 2-)
+  export DB_USERNAME=$(sed -n '1p' $ENV_FILE | cut -d '=' -f 2-)
   export DB_PASSWORD=$(sed -n '2p' $ENV_FILE | cut -d '=' -f 2-)
+  export CERT_PASSWORD=$(sed -n '3p' $ENV_FILE | cut -d '=' -f 2-)
 else
   echo "FILE $ENV_FILE not existing."
 fi

@@ -8,6 +8,8 @@ import de.clemens.stream.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -31,5 +33,15 @@ public class SimpleController {
     @GetMapping("/admin")
     public String adminAccess() {
         return "Access granted for ADMIN role";
+    }
+
+    @GetMapping("/profile")
+    public User getProfile() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        String email = authentication.getName();
+        System.out.println("MAIL: " + email);
+
+        return userService.getUserByEmail(email);
     }
 }

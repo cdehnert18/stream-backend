@@ -25,7 +25,7 @@ public class AuthenticationController {
     @PostMapping("/register")
     public ResponseEntity<GenericResponse<User>> register(@RequestBody RegistrationRequest registrationRequest) {
         User registeredUser = userService.registerUser(registrationRequest.getEmail(), registrationRequest.getUsername(), registrationRequest.getPassword());
-        GenericResponse<User> response = new GenericResponse<>(HttpStatus.CREATED.value(), "User registered successfully", registeredUser);
+        GenericResponse<User> response = new GenericResponse<>(HttpStatus.CREATED.value(), "User registered successfully", null);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

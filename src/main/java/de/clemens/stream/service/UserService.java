@@ -78,6 +78,7 @@ public class UserService implements UserDetailsService {
         Set<Role> roles = new HashSet<>();
         roles.add(userRole);
         user.setRoles(roles);
+
         return userRepository.save(user);
     }
 }

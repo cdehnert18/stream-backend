@@ -1,5 +1,7 @@
 HELP.md
 .gradle
+.env
+cert.p12
 build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/

@@ -16,7 +16,7 @@ public class StreamApplication {
 	@Bean
     public ApplicationRunner applicationRunner(Environment environment) {
         return args -> {
-            System.out.println("Konfiguration: " + environment.getProperty("spring.datasource.username"));
+            //System.out.println("Konfiguration: " + environment.getProperty("spring.datasource.username"));
         };
     }
 }

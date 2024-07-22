@@ -72,6 +72,8 @@ if [ -f "$ENV_FILE" ]; then
   export DB_USERNAME=$(sed -n '1p' $ENV_FILE | cut -d '=' -f 2-)
   export DB_PASSWORD=$(sed -n '2p' $ENV_FILE | cut -d '=' -f 2-)
   export CERT_PASSWORD=$(sed -n '3p' $ENV_FILE | cut -d '=' -f 2-)
+  export DB_TEST_USERNAME=$(sed -n '4p' $ENV_FILE | cut -d '=' -f 2-)
+  export DB_TEST_PASSWORD=$(sed -n '5p' $ENV_FILE | cut -d '=' -f 2-)
 else
   echo "FILE $ENV_FILE not existing."
 fi

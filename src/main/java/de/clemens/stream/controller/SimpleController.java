@@ -1,14 +1,14 @@
 package de.clemens.stream.controller;
 
+import de.clemens.stream.dto.AuthRequest;
+import de.clemens.stream.dto.GenericResponse;
 import de.clemens.stream.entity.User;
+import de.clemens.stream.service.AuthService;
 import de.clemens.stream.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
@@ -17,17 +17,19 @@ public class SimpleController {
     @Autowired
     UserService userService;
 
-    @GetMapping("/number")
-    public int getNumber() {
-        return 42;
+    @Autowired
+    AuthService authService;
+    @GetMapping("/public")
+    public String publicAccess() {
+        return "Access granted for everyone";
     }
-    @GetMapping("/userMail")
-    public User getUserMail(@RequestParam String mail) {
-        return userService.getUserByEmail(mail);
+    @GetMapping("/user")
+    public String userAccess() {
+        return "Access granted for USER role";
     }
 
-    @GetMapping("/userUsername")
-    public List<User> getUserUsername(@RequestParam String username) {
-        return userService.getUserByUsername(username);
+    @GetMapping("/admin")
+    public String adminAccess() {
+        return "Access granted for ADMIN role";
     }
 }

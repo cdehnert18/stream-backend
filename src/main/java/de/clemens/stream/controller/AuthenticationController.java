@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.web.server.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -34,9 +35,15 @@ public class AuthenticationController {
     public ResponseEntity<GenericResponse<Boolean>> login(@RequestBody AuthRequest authRequest, HttpServletRequest request, HttpServletResponse response) {
         GenericResponse<Boolean> authResponse = authService.authenticate(authRequest, request, response);
         if (authResponse.getStatusCode() == HttpStatus.OK.value()) {
+
             return ResponseEntity.ok(authResponse);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(authResponse);
         }
+    }
+
+    @GetMapping("/csrf")
+    public CsrfToken csrfToken(CsrfToken token) {
+        return token;
     }
 }

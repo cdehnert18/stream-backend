@@ -50,6 +50,18 @@ public class UserService implements UserDetailsService {
     }
 
     public User saveUser(User user) {
+        User existingUser = userRepository.findById(user.getEmail()).orElse(null);
+
+        if (existingUser == null) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        } else {
+            // Existing user, check if the password has changed
+            if (!existingUser.getPassword().equals(user.getPassword())) {
+                // Password has changed, hash the new password
+                user.setPassword(passwordEncoder.encode(user.getPassword()));
+            }
+        }
+
         return userRepository.save(user);
     }
 
@@ -72,7 +84,7 @@ public class UserService implements UserDetailsService {
         User user = new User();
         user.setEmail(email);
         user.setUsername(username);
-        user.setPassword(passwordEncoder.encode(password));
+        user.setPassword(password);
 
         Role userRole = roleService.getRoleByName("USER");
         Set<Role> roles = new HashSet<>();
@@ -80,5 +92,11 @@ public class UserService implements UserDetailsService {
         user.setRoles(roles);
 
         return userRepository.save(user);
+    }
+
+    public boolean validateUser(String email, String password) {
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+
+        return optionalUser.filter(user -> passwordEncoder.matches(password, user.getPassword())).isPresent();
     }
 }

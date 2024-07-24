@@ -20,6 +20,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.csrf.CsrfFilter;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
@@ -40,6 +41,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
+                //.csrf(AbstractHttpConfigurer::disable)
                 .authenticationProvider(authenticationProvider())
                 .securityContext(context -> context.securityContextRepository(securityContextRepository()))
                 .authorizeHttpRequests(req -> req.requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/csrf", "/api/auth/logout").permitAll()

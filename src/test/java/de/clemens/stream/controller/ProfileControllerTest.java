@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -27,6 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.hamcrest.Matchers.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.test.web.servlet.MvcResult;
 
 @SpringBootTest(properties = "spring.config.name=application-test")
 @ActiveProfiles("test")
@@ -40,15 +42,34 @@ public class ProfileControllerTest {
     private UserService userService;
 
     private User mockUser;
+    private MockHttpSession session;
+    private String csrfToken;
 
     @BeforeEach
-    public void setup() {
+    public void setup() throws Exception {
         // Initialize a mock User
         mockUser = new User();
         mockUser.setEmail("test@example.com");
         mockUser.setUsername("testuser");
         mockUser.setPassword("encrypted-password");
         mockUser.setRoles(null);  // Set roles as null for the test
+
+        MvcResult result = mockMvc.perform(get("/api/greeting"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        // Extract CSRF Token from the response
+        csrfToken = result.getResponse().getHeader("CSRF-TOKEN");
+
+        // Extract the session from the result
+        session = (MockHttpSession) result.getRequest().getSession();
+
+        if (csrfToken == null) {
+            throw new RuntimeException("CSRF Token is missing");
+        }
+        if (session == null) {
+            throw new RuntimeException("Session is missing");
+        }
     }
 
     @Test
@@ -89,6 +110,9 @@ public class ProfileControllerTest {
 
         // Act & Assert: Perform the PUT request and check the response
         mockMvc.perform(put("/api/profile/user_profile")
+                        .session(session)
+                        .header("X-CSRF-TOKEN", csrfToken)
+
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(profileUpdateRequest)))
                 .andExpect(status().isOk())
@@ -109,6 +133,9 @@ public class ProfileControllerTest {
 
         // Act & Assert: Perform the PUT request and expect a bad request status
         mockMvc.perform(put("/api/profile/user_profile")
+                        .session(session)
+                        .header("X-CSRF-TOKEN", csrfToken)
+
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(profileUpdateRequest)))
                 .andExpect(status().isBadRequest())
@@ -129,6 +156,9 @@ public class ProfileControllerTest {
 
         // Act & Assert: Perform the PUT request and expect a bad request status
         mockMvc.perform(put("/api/profile/user_profile")
+                        .session(session)
+                        .header("X-CSRF-TOKEN", csrfToken)
+
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(profileUpdateRequest)))
                 .andExpect(status().isBadRequest())
@@ -152,6 +182,9 @@ public class ProfileControllerTest {
 
         // Act & Assert: Perform the PUT request and expect a bad request status
         mockMvc.perform(put("/api/profile/user_profile")
+                        .session(session)
+                        .header("X-CSRF-TOKEN", csrfToken)
+
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(profileUpdateRequest)))
                 .andExpect(status().isBadRequest())

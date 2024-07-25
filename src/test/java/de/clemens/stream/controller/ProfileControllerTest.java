@@ -54,7 +54,7 @@ public class ProfileControllerTest {
         mockUser.setPassword("encrypted-password");
         mockUser.setRoles(null);  // Set roles as null for the test
 
-        MvcResult result = mockMvc.perform(get("/api/greeting"))
+        MvcResult result = mockMvc.perform(get("/api/auth/csrf"))
                 .andExpect(status().isOk())
                 .andReturn();
 

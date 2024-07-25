@@ -47,7 +47,7 @@ public class AuthenticationControllerTest {
 
     @BeforeEach
     public void setup() throws Exception {
-        MvcResult result = mockMvc.perform(get("/api/greeting"))
+        MvcResult result = mockMvc.perform(get("/api/auth/csrf"))
                 .andExpect(status().isOk())
                 .andReturn();
 

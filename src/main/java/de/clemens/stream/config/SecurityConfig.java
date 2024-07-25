@@ -46,8 +46,6 @@ public class SecurityConfig {
                 .securityContext(context -> context.securityContextRepository(securityContextRepository()))
                 .authorizeHttpRequests(req -> req.requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/csrf", "/api/auth/logout").permitAll()
                                                  .requestMatchers("/api/profile/**").authenticated()
-                                                 .requestMatchers("/api/user").hasAuthority("USER")
-                                                 .requestMatchers("/api/admin").hasAuthority("ADMIN")
                                                  .anyRequest().permitAll())
                 .logout(logout -> logout
                         .invalidateHttpSession(true)

@@ -41,4 +41,9 @@ public class AuthenticationController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(authResponse);
         }
     }
+
+    @GetMapping("/csrf")
+    public void csrf() {
+
+    }
 }

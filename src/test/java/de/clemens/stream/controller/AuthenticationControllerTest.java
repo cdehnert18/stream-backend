@@ -104,12 +104,13 @@ public class AuthenticationControllerTest {
         when(authService.authenticate(any(AuthRequest.class), any(HttpServletRequest.class), any(HttpServletResponse.class)))
                 .thenReturn(authResponse);
 
-        mockMvc.perform(post("/api/auth/login")
+        MvcResult result = mockMvc.perform(post("/api/auth/login")
                         .session(session)
                         .header("X-CSRF-TOKEN", csrfToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"email\":\"test@example.com\", \"password\":\"password\"}"))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk()).andReturn();
+        csrfToken = result.getResponse().getHeader("CSRF-TOKEN");
 
         // Now perform logout
         MvcResult logoutResult = mockMvc.perform(post("/api/auth/logout")

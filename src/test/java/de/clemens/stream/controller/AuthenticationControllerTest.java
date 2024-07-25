@@ -6,7 +6,6 @@ import de.clemens.stream.dto.RegistrationRequest;
 import de.clemens.stream.entity.User;
 import de.clemens.stream.service.AuthService;
 import de.clemens.stream.service.UserService;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,15 +21,12 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import org.springframework.http.ResponseCookie;
-
-import java.util.Arrays;
 
 @SpringBootTest(properties = "spring.config.name=application-test")
 @ActiveProfiles("test")
@@ -98,5 +94,38 @@ public class AuthenticationControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"email\":\"test@example.com\", \"password\":\"password\"}"))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testLogout() throws Exception {
+        AuthRequest authRequest = new AuthRequest("test@example.com", "password");
+        GenericResponse<Boolean> authResponse = new GenericResponse<>(HttpStatus.OK.value(), "Authenticated", true);
+
+        when(authService.authenticate(any(AuthRequest.class), any(HttpServletRequest.class), any(HttpServletResponse.class)))
+                .thenReturn(authResponse);
+
+        mockMvc.perform(post("/api/auth/login")
+                        .session(session)
+                        .header("X-CSRF-TOKEN", csrfToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\":\"test@example.com\", \"password\":\"password\"}"))
+                .andExpect(status().isOk());
+
+        // Now perform logout
+        MvcResult logoutResult = mockMvc.perform(post("/api/auth/logout")
+                        .session(session)
+                        .header("X-CSRF-TOKEN", csrfToken)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        // Verify that the session is invalidated
+        assertTrue(session.isInvalid());
+
+        // Verify that the response includes a Set-Cookie header that invalidates the JSESSIONID
+        String setCookieHeader = logoutResult.getResponse().getHeader("Set-Cookie");
+        assertTrue(setCookieHeader.contains("JSESSIONID=; Path=/; Max-Age=0;"));
+
+        // Optional: Additional assertions for other response headers, body, etc.
     }
 }

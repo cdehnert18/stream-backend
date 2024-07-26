@@ -46,7 +46,7 @@ public class SecurityConfig {
                 .authenticationProvider(authenticationProvider())
                 .securityContext(context -> context.securityContextRepository(securityContextRepository()))
                 .authorizeHttpRequests(req -> req.requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/csrf", "/api/auth/logout").permitAll()
-                                                 .requestMatchers("/api/profile/**").authenticated()
+                                                 .requestMatchers("/api/profile/**", "/api/videos/upload/**").authenticated()
                                                  .anyRequest().permitAll())
                 .logout(logout -> logout
                         .invalidateHttpSession(true)

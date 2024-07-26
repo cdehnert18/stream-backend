@@ -5,18 +5,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Optional;
 
 @Service
 public class VideoService {
     private final Logger logger = LoggerFactory.getLogger(VideoService.class);
-    public static final String VIDEO = "/video";
     public static final String CONTENT_TYPE = "Content-Type";
     public static final String CONTENT_LENGTH = "Content-Length";
     public static final String VIDEO_CONTENT = "video/";
@@ -24,8 +20,6 @@ public class VideoService {
     public static final String ACCEPT_RANGES = "Accept-Ranges";
     public static final String BYTES = "bytes";
     public static final int CHUNK_SIZE = 314700;
-    public static final int BYTE_RANGE = 1024;
-
     public static final String PATH = "/home/clemensd/Downloads/Volkswagen.mp4";
 
     /**
@@ -36,7 +30,7 @@ public class VideoService {
      * @param range    String.
      * @return ResponseEntity.
      */
-    public ResponseEntity<byte[]> prepareContent(final String fileName, final String fileType, final String range) {
+    public ResponseEntity<byte[]> getVideo(final String fileName, final String fileType, final String range) {
 
         try {
             long rangeStart = 0;
@@ -90,23 +84,11 @@ public class VideoService {
      * @throws IOException exception.
      */
     public byte[] readByteRange(String filename, long start, long end) throws IOException {
-        //Path path = Paths.get(getFilePath(), filename);
         Path path = Path.of(PATH);
         byte[] data = Files.readAllBytes(path);
         byte[] result = new byte[(int) (end - start) + 1];
         System.arraycopy(data, (int) start, result, 0, (int) (end - start) + 1);
         return result;
-    }
-
-    /**
-     * Get the filePath.
-     *
-     * @return String.
-     */
-    private String getFilePath() {
-        URL url = this.getClass().getResource(VIDEO);
-        assert url != null;
-        return new File(url.getFile()).getAbsolutePath();
     }
 
     /**

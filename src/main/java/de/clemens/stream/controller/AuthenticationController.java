@@ -32,7 +32,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    @CrossOrigin("https://192.168.2.113:8080/video")
+    //@CrossOrigin("https://192.168.2.113:8080/video")
     public ResponseEntity<GenericResponse<Boolean>> login(@RequestBody AuthRequest authRequest, HttpServletRequest request, HttpServletResponse response) {
         GenericResponse<Boolean> authResponse = authService.authenticate(authRequest, request, response);
         if (authResponse.getStatusCode() == HttpStatus.OK.value()) {
@@ -44,7 +44,7 @@ public class AuthenticationController {
     }
 
     @GetMapping("/csrf")
-    @CrossOrigin("https://192.168.2.113:8080/video")
+    //@CrossOrigin("https://192.168.2.113:8080/video")
     public void csrf() {
 
     }

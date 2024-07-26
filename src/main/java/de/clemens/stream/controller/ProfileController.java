@@ -14,12 +14,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/profile")
+@RequestMapping("/api/profiles")
 public class ProfileController {
     @Autowired
     UserService userService;
 
-    @GetMapping("/user_profile")
+    @GetMapping("/user")
     public User getUserProfile() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User u = userService.getUserByEmail(authentication.getName());
@@ -28,7 +28,7 @@ public class ProfileController {
         return userService.getUserByEmail(authentication.getName());
     }
 
-    @PutMapping("/user_profile")
+    @PutMapping("/user")
     public ResponseEntity<GenericResponse<String>> updateProfile(@RequestBody ProfileUpdateRequest profileUpdateRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = userService.getUserByEmail(authentication.getName());

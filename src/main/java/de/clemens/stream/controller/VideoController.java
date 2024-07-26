@@ -26,7 +26,7 @@ public class VideoController {
     @Autowired
     FilesStorageService storageService;
 
-    @GetMapping("/stream_videos")
+    @GetMapping("/stream-videos")
     public ResponseEntity<byte[]> streamVideo(
             HttpServletRequest request,
             HttpServletResponse response,
@@ -37,7 +37,7 @@ public class VideoController {
     }
 
     @PostMapping("/upload")
-    @CrossOrigin("https://192.168.2.113:8080/video")
+    //@CrossOrigin("https://192.168.2.113:8080/video")
     public ResponseEntity<GenericResponse<String>> uploadFile(@RequestParam("file") MultipartFile file) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = userService.getUserByEmail(authentication.getName());

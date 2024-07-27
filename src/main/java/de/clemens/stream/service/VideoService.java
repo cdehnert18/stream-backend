@@ -6,6 +6,7 @@ import de.clemens.stream.security.ApplicationUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -31,8 +32,9 @@ public class VideoService {
     public static final String ACCEPT_RANGES = "Accept-Ranges";
     public static final String BYTES = "bytes";
     public static final int CHUNK_SIZE = 314700;
-    //public static final String PATH = "/home/clemensd/Downloads/Volkswagen.mp4";
-    public static final String STORAGE_LOCATION = "/home/clemensd/Downloads/";
+
+    @Value("${fileStorage.path}")
+    public static String STORAGE_LOCATION;
 
     /**
      * Prepare the content.

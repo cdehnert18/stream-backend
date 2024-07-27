@@ -1,5 +1,8 @@
 package de.clemens.stream.service;
 
+import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -17,7 +20,15 @@ import java.util.stream.Stream;
 @Service
 public class FilesStorageService {
 
-    private final Path root = Paths.get("/home/clemensd/Downloads/");
+    @Value("${fileStorage.path}")
+    private String fileStoragePath;
+
+    private Path root;
+
+    @PostConstruct
+    public void initPath() {
+        this.root = Paths.get(fileStoragePath);
+    }
 
     public void init() {
         try {

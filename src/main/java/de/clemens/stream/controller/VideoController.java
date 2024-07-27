@@ -57,7 +57,7 @@ public class VideoController {
             return ResponseEntity.status(HttpStatus.OK).body(new GenericResponse<>(HttpStatus.OK.value(), message, null));
         } catch (Exception e) {
             message = "Could not upload the file: " + file.getOriginalFilename() + ". Error: " + e.getMessage();
-            return ResponseEntity.status(HttpStatus.OK).body(new GenericResponse<>(HttpStatus.BAD_REQUEST.value(),message, null));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new GenericResponse<>(HttpStatus.BAD_REQUEST.value(),message, null));
         }
     }
 }

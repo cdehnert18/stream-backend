@@ -74,7 +74,7 @@ public class ProfileControllerTest {
 
     @Test
     public void testIsApiSecured() throws Exception {
-        mockMvc.perform(get("/api/profile/user_profile"))
+        mockMvc.perform(get("/api/profiles/user"))
                 .andExpect(status().isForbidden());
     }
 
@@ -85,7 +85,7 @@ public class ProfileControllerTest {
         given(userService.getUserByEmail("test@example.com")).willReturn(mockUser);
 
         // Act & Assert: Perform the GET request and check the response
-        mockMvc.perform(get("/api/profile/user_profile"))
+        mockMvc.perform(get("/api/profiles/user"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.email", is("test@example.com")))
@@ -109,7 +109,7 @@ public class ProfileControllerTest {
         given(userService.saveUser(any(User.class))).willReturn(mockUser);
 
         // Act & Assert: Perform the PUT request and check the response
-        mockMvc.perform(put("/api/profile/user_profile")
+        mockMvc.perform(put("/api/profiles/user")
                         .session(session)
                         .header("X-CSRF-TOKEN", csrfToken)
 
@@ -132,7 +132,7 @@ public class ProfileControllerTest {
         profileUpdateRequest.setNewPasswordConfirmed("newpassword");
 
         // Act & Assert: Perform the PUT request and expect a bad request status
-        mockMvc.perform(put("/api/profile/user_profile")
+        mockMvc.perform(put("/api/profiles/user")
                         .session(session)
                         .header("X-CSRF-TOKEN", csrfToken)
 
@@ -155,7 +155,7 @@ public class ProfileControllerTest {
         profileUpdateRequest.setNewPasswordConfirmed("differentpassword"); // Mismatch
 
         // Act & Assert: Perform the PUT request and expect a bad request status
-        mockMvc.perform(put("/api/profile/user_profile")
+        mockMvc.perform(put("/api/profiles/user")
                         .session(session)
                         .header("X-CSRF-TOKEN", csrfToken)
 
@@ -181,7 +181,7 @@ public class ProfileControllerTest {
         given(userService.validateUser(anyString(), anyString())).willReturn(false); // Invalid password
 
         // Act & Assert: Perform the PUT request and expect a bad request status
-        mockMvc.perform(put("/api/profile/user_profile")
+        mockMvc.perform(put("/api/profiles/user")
                         .session(session)
                         .header("X-CSRF-TOKEN", csrfToken)
 

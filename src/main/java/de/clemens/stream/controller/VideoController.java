@@ -2,6 +2,7 @@ package de.clemens.stream.controller;
 
 import de.clemens.stream.dto.GenericResponse;
 import de.clemens.stream.entity.User;
+import de.clemens.stream.entity.Video;
 import de.clemens.stream.service.FilesStorageService;
 import de.clemens.stream.service.UserService;
 import de.clemens.stream.service.VideoService;
@@ -14,6 +15,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/videos")
@@ -35,9 +38,13 @@ public class VideoController {
 
         return videoService.getVideo(id, httpRangeList);
     }
+    @GetMapping("/search-videos")
+    public List<Video> searchVideo(HttpServletRequest request, HttpServletResponse response,
+                                   @RequestParam(value = "keyword", required = true) String keyword) {
 
+        return videoService.searchVideos(keyword);
+    }
     @PostMapping("/upload")
-    //@CrossOrigin("https://192.168.2.113:8080/video")
     public ResponseEntity<GenericResponse<String>> uploadFile(@RequestParam("file") MultipartFile file) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = userService.getUserByEmail(authentication.getName());

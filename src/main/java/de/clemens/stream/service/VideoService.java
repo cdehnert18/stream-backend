@@ -2,14 +2,12 @@ package de.clemens.stream.service;
 import de.clemens.stream.entity.User;
 import de.clemens.stream.entity.Video;
 import de.clemens.stream.repository.VideoRepository;
-import de.clemens.stream.security.ApplicationUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -34,7 +33,7 @@ public class VideoService {
     public static final int CHUNK_SIZE = 314700;
 
     @Value("${fileStorage.path}")
-    public static String STORAGE_LOCATION;
+    public String STORAGE_LOCATION;
 
     /**
      * Prepare the content.
@@ -154,13 +153,40 @@ public class VideoService {
 
         // Erstelle Video-Objekt und setze die Metadaten
         Video video = new Video();
-        video.setTitle(originalFilename); // Titel auf den Dateinamen setzen
-        video.setDescription("Beispielbeschreibung"); // Beschreibung
+        video.setTitle(removeExtension(originalFilename)); // Titel auf den Dateinamen setzen
+        video.setDescription("Beispielbeschreibung Neu"); // Beschreibung
         video.setPath(filePath); // Dateipfad
-        video.setFilename(originalFilename); // Dateiname
+        video.setFilename(originalFilename);
         video.setUser(user);
 
         // Video in der Datenbank speichern
         return videoRepository.save(video);
+    }
+
+    private String removeExtension(final String filename) {
+        if (filename == null || filename.isEmpty()) {
+            return filename;
+        }
+
+        int lastDotIndex = filename.lastIndexOf('.');
+
+        if (lastDotIndex == -1 || lastDotIndex == 0) {
+            return filename;
+        }
+
+        return filename.substring(0, lastDotIndex);
+    }
+
+    public List<Video> searchVideos(String keyword) {
+        User u = new User();
+
+        List<Video> videos = videoRepository.findTop10ByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(keyword, keyword);
+        for(Video video : videos) {
+            u.setUsername(video.getUser().getUsername());
+            video.setUser(u);
+            video.setFilename(null);
+            video.setPath(null);
+        }
+        return videoRepository.findTop10ByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(keyword, keyword);
     }
 }

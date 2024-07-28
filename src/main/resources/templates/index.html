@@ -13,13 +13,6 @@
         Your browser does not support the video tag.
     </video>
 
-    <!--
-    <form method="post" enctype="multipart/form-data" action="https://192.168.2.113:8080/api/videos/upload" id="uploadForm">
-        <label for="file">File</label>
-        <input id="file" name="file" type="file" accept="video/mp4" />
-        <button type="submit">Upload</button>
-    </form>
-    -->
     <form method="post" enctype="multipart/form-data" action="https://192.168.2.113:8080/api/videos/upload" id="uploadForm">
         <label for="videoFile">Video File:</label>
         <input id="videoFile" name="videoFile" type="file" accept="video/mp4" required /><br>
@@ -70,35 +63,6 @@
                 console.error('Error fetching CSRF token:', error);
             });
         };
-
-/*
-        document.getElementById('uploadForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-
-            const fileInput = document.getElementById('file');
-            const file = fileInput.files[0];
-            const formData = new FormData();
-            formData.append('file', file);
-
-            fetch('https://192.168.2.113:8080/api/videos/upload', {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': csrfToken
-                    },
-                    body: formData,
-                    credentials: 'include'
-                })
-                .then(response => response.json())  // Antwort als JSON parsen
-                .then(data => {
-                    // Zeige die Nachricht aus der Antwort an
-                    document.getElementById('message').innerText = data.message;
-                })
-            .catch(error => {
-                console.error('Fehler beim Hochladen:', error);
-                document.getElementById('message').innerText = 'Fehler beim Hochladen';
-                });
-        });
-*/
 
         document.getElementById('uploadForm').addEventListener('submit', function(event) {
             event.preventDefault();

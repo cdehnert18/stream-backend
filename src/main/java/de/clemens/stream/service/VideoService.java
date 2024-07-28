@@ -2,6 +2,9 @@ package de.clemens.stream.service;
 import de.clemens.stream.entity.User;
 import de.clemens.stream.entity.Video;
 import de.clemens.stream.repository.VideoRepository;
+import jakarta.persistence.Column;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +18,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class VideoService {
@@ -48,7 +53,7 @@ public class VideoService {
 
         try {
             if (!optionalVideo.isPresent()) throw new IOException();
-            String path = optionalVideo.get().getPath();
+            String path = optionalVideo.get().getVideoPath();
 
             long rangeStart = 0;
             long rangeEnd = CHUNK_SIZE;
@@ -137,26 +142,34 @@ public class VideoService {
         }
         return 0L;
     }
-    public Video save(MultipartFile file, User user) throws IOException {
-        // Extrahiere Informationen aus der Datei
-        String originalFilename = file.getOriginalFilename();
-        if (originalFilename == null) {
+    public Video save(MultipartFile videoFile, MultipartFile thumbnailFile, User user, String videoTitle, String videoDescription) throws IOException {
+
+        String originalVideoFilename = videoFile.getOriginalFilename();
+        if (originalVideoFilename == null) {
+            throw new IllegalArgumentException("Filename cannot be null");
+        }
+        String originalThumbnailFilename = thumbnailFile.getOriginalFilename();
+        if (originalThumbnailFilename == null) {
             throw new IllegalArgumentException("Filename cannot be null");
         }
 
         // Speicherort für die Datei bestimmen
-        String filePath = STORAGE_LOCATION + originalFilename;
+        String videoFilePath = STORAGE_LOCATION + originalVideoFilename;
+        String thumbnailFilePath = STORAGE_LOCATION + originalThumbnailFilename;
 
         // Datei speichern
-        File destinationFile = new File(filePath);
-        file.transferTo(destinationFile);
+        File videoDestinationFile = new File(videoFilePath);
+        videoFile.transferTo(videoDestinationFile);
+
+        File thumbnailDestinationFile = new File(thumbnailFilePath);
+        thumbnailFile.transferTo(thumbnailDestinationFile);
 
         // Erstelle Video-Objekt und setze die Metadaten
         Video video = new Video();
-        video.setTitle(removeExtension(originalFilename)); // Titel auf den Dateinamen setzen
-        video.setDescription("Beispielbeschreibung Neu"); // Beschreibung
-        video.setPath(filePath); // Dateipfad
-        video.setFilename(originalFilename);
+        video.setTitle(videoTitle);
+        video.setDescription(videoDescription);
+        video.setVideoPath(videoFilePath);
+        video.setThumbnailPath(thumbnailFilePath);
         video.setUser(user);
 
         // Video in der Datenbank speichern
@@ -184,8 +197,8 @@ public class VideoService {
         for(Video video : videos) {
             u.setUsername(video.getUser().getUsername());
             video.setUser(u);
-            video.setFilename(null);
-            video.setPath(null);
+            video.setVideoPath(null);
+            video.setThumbnailPath(null);
         }
         return videoRepository.findTop10ByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(keyword, keyword);
     }

@@ -27,11 +27,11 @@ public class Video {
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "path", nullable = false, length = 255)
-    private String path;
+    @Column(name = "video_path", nullable = false, length = 255)
+    private String videoPath;
 
-    @Column(name = "filename", nullable = false, length = 255)
-    private String filename;
+    @Column(name = "thumbnail_path", nullable = false, length = 255)
+    private String thumbnailPath;
 
     @Column(name = "upload_date", columnDefinition = "TIMESTAMP")
     private LocalDateTime uploadDate = LocalDateTime.now();

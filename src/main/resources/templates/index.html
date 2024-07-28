@@ -9,13 +9,30 @@
     <p>Test</p>
 
     <video width="450" height="360" controls>
-        <source src="https://192.168.2.113:8080/api/videos/stream-videos?videoId=4b694830-a436-4afc-a77b-2882b075f133" type="video/mp4">
+        <source src="https://192.168.2.113:8080/api/videos/stream-videos?videoId=f248362d-54fc-49b5-9db0-e21aba9279ad" type="video/mp4">
         Your browser does not support the video tag.
     </video>
 
+    <!--
     <form method="post" enctype="multipart/form-data" action="https://192.168.2.113:8080/api/videos/upload" id="uploadForm">
         <label for="file">File</label>
         <input id="file" name="file" type="file" accept="video/mp4" />
+        <button type="submit">Upload</button>
+    </form>
+    -->
+    <form method="post" enctype="multipart/form-data" action="https://192.168.2.113:8080/api/videos/upload" id="uploadForm">
+        <label for="videoFile">Video File:</label>
+        <input id="videoFile" name="videoFile" type="file" accept="video/mp4" required /><br>
+
+        <label for="thumbnailFile">Thumbnail Image:</label>
+        <input id="thumbnailFile" name="thumbnailFile" type="file" accept="image/*" required /><br>
+
+        <label for="videoTitle">Video Title:</label>
+        <input id="videoTitle" name="videoTitle" type="text" required /><br>
+
+        <label for="videoDescription">Video Description:</label>
+        <textarea id="videoDescription" name="videoDescription" rows="4" required></textarea><br>
+
         <button type="submit">Upload</button>
     </form>
     <div id="message"></div>
@@ -54,6 +71,7 @@
             });
         };
 
+/*
         document.getElementById('uploadForm').addEventListener('submit', function(event) {
             event.preventDefault();
 
@@ -78,6 +96,45 @@
             .catch(error => {
                 console.error('Fehler beim Hochladen:', error);
                 document.getElementById('message').innerText = 'Fehler beim Hochladen';
+                });
+        });
+*/
+
+        document.getElementById('uploadForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const videoFileInput = document.getElementById('videoFile');
+            const thumbnailFileInput = document.getElementById('thumbnailFile');
+            const videoTitleInput = document.getElementById('videoTitle');
+            const videoDescriptionInput = document.getElementById('videoDescription');
+
+            const videoFile = videoFileInput.files[0];
+            const thumbnailFile = thumbnailFileInput.files[0];
+            const videoTitle = videoTitleInput.value;
+            const videoDescription = videoDescriptionInput.value;
+
+            const formData = new FormData();
+            formData.append('videoFile', videoFile);
+            formData.append('thumbnailFile', thumbnailFile);
+            formData.append('videoTitle', videoTitle);
+            formData.append('videoDescription', videoDescription);
+
+            fetch('https://192.168.2.113:8080/api/videos/upload', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: formData,
+                    credentials: 'include'
+                })
+                .then(response => response.json()) // Antwort als JSON parsen
+                .then(data => {
+                    // Zeige die Nachricht aus der Antwort an
+                    document.getElementById('message').innerText = data.message;
+                })
+                .catch(error => {
+                    console.error('Fehler beim Hochladen:', error);
+                    document.getElementById('message').innerText = 'Fehler beim Hochladen';
                 });
         });
 

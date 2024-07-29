@@ -87,10 +87,10 @@ public class ProfileControllerTest {
         mockMvc.perform(get("/api/profiles/user"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.email", is("test@example.com")))
-                .andExpect(jsonPath("$.username", is("testuser")))
-                .andExpect(jsonPath("$.password", nullValue()))
-                .andExpect(jsonPath("$.roles", nullValue()));
+                .andExpect(jsonPath("$.data.email", is("test@example.com")))
+                .andExpect(jsonPath("$.data.username", is("testuser")))
+                .andExpect(jsonPath("$.data.password", nullValue()))
+                .andExpect(jsonPath("$.data.roles", nullValue()));
     }
 
     @Test
@@ -114,7 +114,6 @@ public class ProfileControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(profileUpdateRequest)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.statusCode", is(HttpStatus.OK.value())))
                 .andExpect(jsonPath("$.message", is("Profile updated successfully")))
                 .andExpect(jsonPath("$.data", nullValue()));
     }
@@ -137,9 +136,7 @@ public class ProfileControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(profileUpdateRequest)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.statusCode", is(HttpStatus.BAD_REQUEST.value())))
-                .andExpect(jsonPath("$.message", is("Username is empty")))
-                .andExpect(jsonPath("$.data", nullValue()));
+                .andExpect(jsonPath("$.message", is("Username is empty")));
     }
 
     @Test
@@ -160,7 +157,6 @@ public class ProfileControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(profileUpdateRequest)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.statusCode", is(HttpStatus.BAD_REQUEST.value())))
                 .andExpect(jsonPath("$.message", is("New password confirmation failed")))
                 .andExpect(jsonPath("$.data", nullValue()));
     }
@@ -186,7 +182,6 @@ public class ProfileControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(profileUpdateRequest)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.statusCode", is(HttpStatus.BAD_REQUEST.value())))
                 .andExpect(jsonPath("$.message", is("Current password is incorrect")))
                 .andExpect(jsonPath("$.data", nullValue()));
     }

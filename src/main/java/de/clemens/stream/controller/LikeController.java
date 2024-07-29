@@ -1,10 +1,10 @@
 package de.clemens.stream.controller;
 
-import de.clemens.stream.dto.GenericResponse;
+import de.clemens.stream.dto.ApiResponse;
+import de.clemens.stream.dto.ApiResponseStatus;
 import de.clemens.stream.entity.User;
 import de.clemens.stream.service.LikeService;
 import de.clemens.stream.service.UserService;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,23 +22,20 @@ public class LikeController {
     UserService userService;
 
     @GetMapping
-    public int getVideoLikes(@RequestParam(value = "videoId", required = true) String videoId) {
-        return likeService.getLikes(videoId);
+    public ResponseEntity<ApiResponse<Integer>> getVideoLikes(@RequestParam(value = "videoId", required = true) String videoId) {
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<Integer>(ApiResponseStatus.success, "Got likes of video", likeService.getLikes(videoId)));
     }
 
     @PostMapping
-    public GenericResponse<String> toggleVideoLike(@RequestParam(value = "videoId", required = true) String videoId) {
+    public ResponseEntity<ApiResponse<String>> toggleVideoLike(@RequestParam(value = "videoId", required = true) String videoId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = userService.getUserByEmail(authentication.getName());
 
         String message = likeService.toggleLike(videoId, currentUser);
-        if(message.contains("Error")) {
-            return new GenericResponse<>(HttpStatus.BAD_REQUEST.value(), message, null);
-        }
-        if(message.contains("unliked")) {
-            return new GenericResponse<>(HttpStatus.OK.value(), message, null);
+        if(message.contains("not")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<String>(ApiResponseStatus.error, message));
         }
 
-        return new GenericResponse<>(HttpStatus.CREATED.value(), message, null);
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<String>(ApiResponseStatus.success, message));
     }
 }

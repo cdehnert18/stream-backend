@@ -1,6 +1,7 @@
 package de.clemens.stream.controller;
 
-import de.clemens.stream.dto.GenericResponse;
+import de.clemens.stream.dto.ApiResponse;
+import de.clemens.stream.dto.ApiResponseStatus;
 import de.clemens.stream.dto.ProfileUpdateRequest;
 import de.clemens.stream.entity.User;
 import de.clemens.stream.service.UserService;
@@ -11,8 +12,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
 @RestController
 @RequestMapping("/api/profiles")
 public class ProfileController {
@@ -20,16 +19,16 @@ public class ProfileController {
     UserService userService;
 
     @GetMapping("/user")
-    public User getUserProfile() {
+    public ResponseEntity<ApiResponse<User>> getUserProfile() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User u = userService.getUserByEmail(authentication.getName());
         u.setPassword(null);
         u.setRoles(null);
-        return userService.getUserByEmail(authentication.getName());
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<User>(ApiResponseStatus.success,"Got profile", userService.getUserByEmail(authentication.getName())));
     }
 
     @PutMapping("/user")
-    public ResponseEntity<GenericResponse<String>> updateProfile(@RequestBody ProfileUpdateRequest profileUpdateRequest) {
+    public ResponseEntity<ApiResponse<String>> updateProfile(@RequestBody ProfileUpdateRequest profileUpdateRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = userService.getUserByEmail(authentication.getName());
 
@@ -62,17 +61,17 @@ public class ProfileController {
 
         // Save the updated user profile
         if (userService.saveUser(currentUser) != null) {
-            return ResponseEntity.ok(new GenericResponse<>(HttpStatus.OK.value(), "Profile updated successfully", null));
+            return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<String>(ApiResponseStatus.success, "Profile updated successfully"));
         }
 
-        return buildErrorResponse("Cannot update profile");
+        return buildErrorResponse("Could not update profile");
     }
 
     private boolean isNullOrEmpty(String str) {
         return str == null || str.trim().isEmpty();
     }
 
-    private ResponseEntity<GenericResponse<String>> buildErrorResponse(String message) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new GenericResponse<>(HttpStatus.BAD_REQUEST.value(), message, null));
+    private ResponseEntity<ApiResponse<String>> buildErrorResponse(String message) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<String>(ApiResponseStatus.error, message));
     }
 }

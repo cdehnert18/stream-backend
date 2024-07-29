@@ -1,6 +1,7 @@
 package de.clemens.stream.controller;
 
-import de.clemens.stream.dto.GenericResponse;
+import de.clemens.stream.dto.ApiResponse;
+import de.clemens.stream.dto.ApiResponseStatus;
 import de.clemens.stream.entity.User;
 import de.clemens.stream.entity.Video;
 import de.clemens.stream.service.FilesStorageService;
@@ -39,16 +40,16 @@ public class VideoController {
         return videoService.getVideo(id, httpRangeList);
     }
     @GetMapping("/search-videos")
-    public List<Video> searchVideo(HttpServletRequest request, HttpServletResponse response,
+    public ResponseEntity<ApiResponse<List<Video>>> searchVideo(HttpServletRequest request, HttpServletResponse response,
                                    @RequestParam(value = "keyword", required = true) String keyword) {
 
-        return videoService.searchVideos(keyword);
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<List<Video>>(ApiResponseStatus.success, "Got videos for keyword: " + keyword, videoService.searchVideos(keyword)));
     }
     @PostMapping("/upload")
-    public GenericResponse<String> uploadFile(@RequestParam("videoFile") MultipartFile videoFile,
-                                                              @RequestParam("thumbnailFile") MultipartFile thumbnailFile,
-                                                              @RequestParam(value = "videoTitle", required = true) String videoTitle,
-                                                              @RequestParam(value = "videoDescription", required = true)  String videoDescription) {
+    public ResponseEntity<ApiResponse<String>> uploadFile(@RequestParam("videoFile") MultipartFile videoFile,
+                                                          @RequestParam("thumbnailFile") MultipartFile thumbnailFile,
+                                                          @RequestParam(value = "videoTitle", required = true) String videoTitle,
+                                                          @RequestParam(value = "videoDescription", required = true)  String videoDescription) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = userService.getUserByEmail(authentication.getName());
@@ -59,22 +60,22 @@ public class VideoController {
             if(videoService.save(videoFile, thumbnailFile, currentUser, videoTitle, videoDescription) == null) throw new Exception();
 
             message = "Uploaded the file successfully: " + videoFile.getOriginalFilename();
-            return new GenericResponse<>(HttpStatus.OK.value(), message, null);
+            return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<String>(ApiResponseStatus.success, message));
         } catch (Exception e) {
             message = "Could not upload the file: " + videoFile.getOriginalFilename();
-            return new GenericResponse<>(HttpStatus.BAD_REQUEST.value(), message, null);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<String>(ApiResponseStatus.error, message));
         }
     }
 
     @DeleteMapping
-    public GenericResponse<String> deleteVideo(@RequestParam(value = "videoId", required = true) String videoId) {
+    public ResponseEntity<ApiResponse<String>> deleteVideo(@RequestParam(value = "videoId", required = true) String videoId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = userService.getUserByEmail(authentication.getName());
 
         if(videoService.deleteVideo(currentUser, videoId)) {
-            return new GenericResponse<>(HttpStatus.OK.value(), "Video deleted", null);
+            return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<String>(ApiResponseStatus.success, "Video deleted"));
         } else {
-            return new GenericResponse<>(HttpStatus.BAD_REQUEST.value(), "Error", null);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<String>(ApiResponseStatus.error, "Could not delete video"));
         }
     }
 }

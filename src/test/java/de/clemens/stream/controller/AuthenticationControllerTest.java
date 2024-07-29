@@ -1,7 +1,6 @@
 package de.clemens.stream.controller;
 
 import de.clemens.stream.dto.AuthRequest;
-import de.clemens.stream.dto.GenericResponse;
 import de.clemens.stream.dto.RegistrationRequest;
 import de.clemens.stream.entity.User;
 import de.clemens.stream.service.AuthService;
@@ -82,11 +81,8 @@ public class AuthenticationControllerTest {
 
     @Test
     public void testLogin() throws Exception {
-        AuthRequest authRequest = new AuthRequest("test@example.com", "password");
-        GenericResponse<Boolean> authResponse = new GenericResponse<>(HttpStatus.OK.value(), "Authenticated", true);
 
-        when(authService.authenticate(any(AuthRequest.class), any(HttpServletRequest.class), any(HttpServletResponse.class)))
-                .thenReturn(authResponse);
+        when(authService.authenticate(any(AuthRequest.class), any(HttpServletRequest.class), any(HttpServletResponse.class))).thenReturn(true);
 
         mockMvc.perform(post("/api/auth/login")
                         .session(session)
@@ -98,11 +94,8 @@ public class AuthenticationControllerTest {
 
     @Test
     public void testLogout() throws Exception {
-        AuthRequest authRequest = new AuthRequest("test@example.com", "password");
-        GenericResponse<Boolean> authResponse = new GenericResponse<>(HttpStatus.OK.value(), "Authenticated", true);
 
-        when(authService.authenticate(any(AuthRequest.class), any(HttpServletRequest.class), any(HttpServletResponse.class)))
-                .thenReturn(authResponse);
+        when(authService.authenticate(any(AuthRequest.class), any(HttpServletRequest.class), any(HttpServletResponse.class))).thenReturn(true);
 
         MvcResult result = mockMvc.perform(post("/api/auth/login")
                         .session(session)
@@ -126,7 +119,5 @@ public class AuthenticationControllerTest {
         // Verify that the response includes a Set-Cookie header that invalidates the JSESSIONID
         String setCookieHeader = logoutResult.getResponse().getHeader("Set-Cookie");
         assertTrue(setCookieHeader.contains("JSESSIONID=; Path=/; Max-Age=0;"));
-
-        // Optional: Additional assertions for other response headers, body, etc.
     }
 }

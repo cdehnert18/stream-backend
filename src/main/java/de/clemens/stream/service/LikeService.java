@@ -27,7 +27,7 @@ public class LikeService {
         // Check, if video exists
         Optional<Video> video = videoRepository.findById(videoId);
         if(video.isEmpty()) {
-            return "Error: Video not found";
+            return "Could not found video";
         }
 
         Like like = new Like();

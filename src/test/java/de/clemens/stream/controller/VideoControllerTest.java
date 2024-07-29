@@ -91,8 +91,7 @@ public class VideoControllerTest {
                         .param("videoTitle", "Video Title")
                         .param("videoDescription", "Video Description")
                         .contentType(MediaType.MULTIPART_FORM_DATA))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.statusCode", is(HttpStatus.OK.value())))
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.message", is("Uploaded the file successfully: video.mp4")))
                 .andExpect(jsonPath("$.data", nullValue()));
 
@@ -126,8 +125,7 @@ public class VideoControllerTest {
                         .param("videoTitle", "Video Title")
                         .param("videoDescription", "Video Description")
                         .contentType(MediaType.MULTIPART_FORM_DATA))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.statusCode").value(HttpStatus.BAD_REQUEST.value()))
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("Could not upload the file: video.mp4"))
                 .andExpect(jsonPath("$.data", nullValue()));
 

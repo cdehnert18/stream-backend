@@ -1,9 +1,9 @@
 package de.clemens.stream.controller;
 
+import de.clemens.stream.dto.ApiResponse;
+import de.clemens.stream.dto.ApiResponseStatus;
 import de.clemens.stream.dto.AuthRequest;
-import de.clemens.stream.dto.GenericResponse;
 import de.clemens.stream.dto.RegistrationRequest;
-import de.clemens.stream.entity.User;
 import de.clemens.stream.service.AuthService;
 import de.clemens.stream.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,7 +11,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.web.server.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,27 +23,22 @@ public class AuthenticationController {
     private AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<GenericResponse<User>> register(@RequestBody RegistrationRequest registrationRequest) {
-        User registeredUser = userService.registerUser(registrationRequest.getEmail(), registrationRequest.getUsername(), registrationRequest.getPassword());
-        GenericResponse<User> response = new GenericResponse<>(HttpStatus.CREATED.value(), "User registered successfully", null);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    public ResponseEntity<ApiResponse<String>> register(@RequestBody RegistrationRequest registrationRequest) {
+        if(userService.registerUser(registrationRequest.getEmail(), registrationRequest.getUsername(), registrationRequest.getPassword()) == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<String>(ApiResponseStatus.error, "User created"));
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<String>(ApiResponseStatus.success, "Could not create user"));
     }
 
     @PostMapping("/login")
-    //@CrossOrigin("https://192.168.2.113:8080/video")
-    public ResponseEntity<GenericResponse<Boolean>> login(@RequestBody AuthRequest authRequest, HttpServletRequest request, HttpServletResponse response) {
-        GenericResponse<Boolean> authResponse = authService.authenticate(authRequest, request, response);
-        if (authResponse.getStatusCode() == HttpStatus.OK.value()) {
-
-            return ResponseEntity.ok(authResponse);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(authResponse);
+    public ResponseEntity<ApiResponse<String>> login(@RequestBody AuthRequest authRequest, HttpServletRequest request, HttpServletResponse response) {
+        if(!authService.authenticate(authRequest, request, response)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<String>(ApiResponseStatus.error, "Could not log in"));
         }
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<String>(ApiResponseStatus.success, "You are logged in"));
     }
 
     @GetMapping("/csrf")
-    //@CrossOrigin("https://192.168.2.113:8080/video")
     public void csrf() {
 
     }

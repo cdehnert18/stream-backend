@@ -42,7 +42,7 @@ public class CommentController {
     }
 
     @DeleteMapping
-    public GenericResponse<String> deleteComment(@RequestParam(value = "CommentId", required = true) String commentId) {
+    public GenericResponse<String> deleteComment(@RequestParam(value = "commentId", required = true) String commentId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = userService.getUserByEmail(authentication.getName());
 

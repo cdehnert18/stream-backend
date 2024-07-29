@@ -1,4 +1,5 @@
 package de.clemens.stream.service;
+import de.clemens.stream.entity.Comment;
 import de.clemens.stream.entity.User;
 import de.clemens.stream.entity.Video;
 import de.clemens.stream.repository.VideoRepository;
@@ -201,5 +202,25 @@ public class VideoService {
             video.setThumbnailPath(null);
         }
         return videoRepository.findTop10ByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(keyword, keyword);
+    }
+
+    public boolean deleteVideo(User user, String videoId) {
+        Optional<Video> video = videoRepository.findById(videoId);
+        if(video.isEmpty()) {
+            return false;
+        }
+
+        if(user.equals(video.get().getUser())) {
+            File videoFile = new File(video.get().getVideoPath());
+            File thumbnailFile = new File(video.get().getThumbnailPath());
+            if(!videoFile.delete() || !thumbnailFile.delete()) {
+                return false;
+            }
+            videoRepository.delete(video.get());
+
+            return true;
+        }
+
+        return false;
     }
 }

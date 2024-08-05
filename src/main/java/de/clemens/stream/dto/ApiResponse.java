@@ -2,7 +2,6 @@ package de.clemens.stream.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
@@ -19,12 +18,14 @@ public class ApiResponse<T> {
     public ApiResponse(ApiResponseStatus apiResponseStatus, String message) {
         this.apiResponseStatus = apiResponseStatus;
         this.message = message;
+        this.timestamp = LocalDateTime.now();
     }
 
     public ApiResponse(ApiResponseStatus apiResponseStatus, String message, T data) {
         this.apiResponseStatus = apiResponseStatus;
         this.message = message;
         this.data = data;
+        this.timestamp = LocalDateTime.now();
     }
 }
 

@@ -23,7 +23,10 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation group: 'io.projectreactor', name: 'reactor-core', version: '3.6.8'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'//temp
+	implementation 'com.h2database:h2'
+	
 	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+	
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'com.h2database:h2'
 	testImplementation 'org.springframework.security:spring-security-test'

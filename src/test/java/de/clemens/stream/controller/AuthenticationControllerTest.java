@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -66,18 +67,15 @@ public class AuthenticationControllerTest {
 
     @Test
     public void testRegister() throws Exception {
-        RegistrationRequest registrationRequest = new RegistrationRequest("test@example.com", "testuser", "password", "password");
-        
-        String pw = any(String.class);
 
-        when(userService.registerUser(any(String.class), any(String.class), pw, pw))
+        when(userService.registerUser(any(String.class), any(String.class), eq("pw"), eq("pw")))
                 .thenReturn(new User());
 
         mockMvc.perform(post("/api/auth/register")
                         .session(session)
                         .header("X-CSRF-TOKEN", csrfToken)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"email\":\"test@example.com\", \"username\":\"testuser\", \"password\":\"password\"}"))
+                        .content("{\"email\":\"test@example.com\", \"username\":\"testuser\", \"password\":\"pw\", \"passwordConfirm\":\"pw\"}"))
                 .andExpect(status().isCreated());
     }
 

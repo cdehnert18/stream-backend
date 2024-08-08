@@ -80,7 +80,10 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public User registerUser(String email, String username, String password) {
+    public User registerUser(String email, String username, String password, String passwordConfirm) {
+        
+        if(!password.equals(passwordConfirm)) return null;
+
         User user = new User();
         user.setEmail(email);
         user.setUsername(username);
@@ -91,7 +94,7 @@ public class UserService implements UserDetailsService {
         roles.add(userRole);
         user.setRoles(roles);
 
-        return userRepository.save(user);
+        return saveUser(user);
     }
 
     public boolean validateUser(String email, String password) {

@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
@@ -20,7 +19,8 @@ public class CorsConfig {
                 "https://localhost:5173",
                 "https://127.0.0.1:5173",
                 "https://192.168.2.113:5173",
-                "https://192.168.2.106:5173"
+                "https://192.168.2.106:5173",
+                "https://192.168.2.110:5173"
         );
 
         List<String> allowedMethodes = Arrays.asList(

@@ -66,9 +66,11 @@ public class AuthenticationControllerTest {
 
     @Test
     public void testRegister() throws Exception {
-        RegistrationRequest registrationRequest = new RegistrationRequest("test@example.com", "testuser", "password");
+        RegistrationRequest registrationRequest = new RegistrationRequest("test@example.com", "testuser", "password", "password");
+        
+        String pw = any(String.class);
 
-        when(userService.registerUser(any(String.class), any(String.class), any(String.class)))
+        when(userService.registerUser(any(String.class), any(String.class), pw, pw))
                 .thenReturn(new User());
 
         mockMvc.perform(post("/api/auth/register")

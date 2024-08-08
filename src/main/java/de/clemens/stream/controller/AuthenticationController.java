@@ -24,7 +24,7 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<String>> register(@RequestBody RegistrationRequest registrationRequest) {
-        if(userService.registerUser(registrationRequest.getEmail(), registrationRequest.getUsername(), registrationRequest.getPassword()) == null) {
+        if(userService.registerUser(registrationRequest.getEmail(), registrationRequest.getUsername(), registrationRequest.getPassword(), registrationRequest.getPasswordConfirm()) == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<String>(ApiResponseStatus.error, "Could not create user"));
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<String>(ApiResponseStatus.success, "User created"));

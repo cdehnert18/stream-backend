@@ -1,11 +1,7 @@
 package de.clemens.stream.service;
-import de.clemens.stream.entity.Comment;
 import de.clemens.stream.entity.User;
 import de.clemens.stream.entity.Video;
 import de.clemens.stream.repository.VideoRepository;
-import jakarta.persistence.Column;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +15,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class VideoService {
@@ -202,6 +196,10 @@ public class VideoService {
             video.setThumbnailPath(null);
         }
         return videoRepository.findTop10ByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(keyword, keyword);
+    }
+
+    public List<Video> getLatestVideos() {
+        return videoRepository.findTop10ByOrderByUploadDateDesc();
     }
 
     public boolean deleteVideo(User user, String videoId) {

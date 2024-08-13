@@ -45,6 +45,13 @@ public class VideoController {
 
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<List<Video>>(ApiResponseStatus.success, "Got videos for keyword: " + keyword, videoService.searchVideos(keyword)));
     }
+
+    @GetMapping("/latest-videos")
+    public ResponseEntity<ApiResponse<List<Video>>> latestVideo(HttpServletRequest request, HttpServletResponse response) {
+
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<List<Video>>(ApiResponseStatus.success, "Got videos for keyword", videoService.getLatestVideos()));
+    }
+
     @PostMapping("/upload")
     public ResponseEntity<ApiResponse<String>> uploadFile(@RequestParam("videoFile") MultipartFile videoFile,
                                                           @RequestParam("thumbnailFile") MultipartFile thumbnailFile,

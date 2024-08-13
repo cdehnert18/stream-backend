@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface VideoRepository extends JpaRepository<Video, String> {
     Optional<Video> findById(String id);
     List<Video> findTop10ByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(String titleKeyword, String descriptionKeyword);
+    List<Video> findTop10ByOrderByUploadDateDesc();
 }

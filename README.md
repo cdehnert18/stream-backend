@@ -10,15 +10,7 @@ This backend service is designed to handle video uploads, comments, likes, and o
 
 - **Video Management**: Upload, retrieve, and manage video content.
 - **Comments and Likes**: Allow users to comment on and like videos.
-- **Security**: Secure API access with authentication and authorization mechanisms.
-
-## Frontend
-
-The frontend for this application will be available soon. 
-
-## Website
-
-You can visit the live website later this year.
+- **Security**: API access with authentication and authorization mechanisms.
 
 ## Setup and Installation
 
